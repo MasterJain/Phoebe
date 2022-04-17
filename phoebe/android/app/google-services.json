@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "364118242765",
+    "firebase_url": "https://phoebeu-d658c.firebaseio.com",
+    "project_id": "phoebeu-d658c",
+    "storage_bucket": "phoebeu-d658c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:364118242765:android:b643ef50398c7e00e58084",
+        "android_client_info": {
+          "package_name": "jain.phoebe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "364118242765-20rdhmsvsano10bcrs5b3lukl1jgskei.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "jain.phoebe",
+            "certificate_hash": "9d3677bccb2af51dc7307e4d411c101445b49d16"
+          }
+        },
+        {
+          "client_id": "364118242765-pjoqr2rp2cja3e98hjht3l4bnktue5sj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "jain.phoebe",
+            "certificate_hash": "1f6ca71b74a766a3f876f5ab2336789b63be636e"
+          }
+        },
+        {
+          "client_id": "364118242765-7gcmpsl42ua0kt24dvntclkf6tt5teho.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEckWu22v6TUnETnsXsJ8yythtJwOWiz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "364118242765-7gcmpsl42ua0kt24dvntclkf6tt5teho.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "364118242765-e8m8d512mi0nksjm0aajjmnmiuts61um.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "jain.phoebe"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
