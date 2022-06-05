@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wallpaper_app/models/config.dart';
 
 class SignInBloc extends ChangeNotifier {
   SignInBloc() {
@@ -14,7 +13,8 @@ class SignInBloc extends ChangeNotifier {
   }
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final GoogleSignIn _googlSignIn = new GoogleSignIn();
+  final GoogleSignIn _googlSignIn = GoogleSignIn();
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   bool _guestUser = false;
   bool get guestUser => _guestUser;
@@ -25,30 +25,25 @@ class SignInBloc extends ChangeNotifier {
   bool _hasError = false;
   bool get hasError => _hasError;
 
-  String _errorCode;
-  String get errorCode => _errorCode;
+  String? _errorCode;
+  String? get errorCode => _errorCode;
 
-  bool _userExists = false;
-  bool get userExists => _userExists;
+  String? _name;
+  String? get name => _name;
 
-  String _name;
-  String get name => _name;
+  String? _uid;
+  String? get uid => _uid;
 
-  String _uid;
-  String get uid => _uid;
+  String? _email;
+  String? get email => _email;
 
-  String _email;
-  String get email => _email;
+  String? _imageUrl;
+  String? get imageUrl => _imageUrl;
 
-  String _imageUrl;
-  String get imageUrl => _imageUrl;
-
-  String timestamp;
+  String? timestamp;
 
   Future signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googlSignIn
-        .signIn()
-        .catchError((error) => print('error : $error'));
+    final GoogleSignInAccount? googleUser = await _googlSignIn.signIn();
     if (googleUser != null) {
       try {
         final GoogleSignInAuthentication googleAuth =
@@ -59,19 +54,19 @@ class SignInBloc extends ChangeNotifier {
           idToken: googleAuth.idToken,
         );
 
-        User userDetails =
-            (await _firebaseAuth.signInWithCredential(credential)).user;
+        final User userDetails =
+            (await _firebaseAuth.signInWithCredential(credential)).user!;
 
-        this._name = userDetails.displayName;
-        this._email = userDetails.email;
-        this._imageUrl = userDetails.photoURL;
-        this._uid = userDetails.uid;
+        _name = userDetails.displayName;
+        _email = userDetails.email;
+        _imageUrl = userDetails.photoURL;
+        _uid = userDetails.uid;
 
         _hasError = false;
         notifyListeners();
       } catch (e) {
         _hasError = true;
-        _errorCode = e.code;
+        _errorCode = e.toString();
         notifyListeners();
       }
     } else {
@@ -80,30 +75,19 @@ class SignInBloc extends ChangeNotifier {
     }
   }
 
-  Future checkUserExists() async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .get()
-        .then((QuerySnapshot snap) {
-      List values = snap.docs;
-      List uids = [];
-      values.forEach((element) {
-        uids.add(element['uid']);
-      });
-      if (uids.contains(_uid)) {
-        _userExists = true;
-        print('User exists');
-      } else {
-        _userExists = false;
-        print('new User');
-      }
-      notifyListeners();
-    });
+  Future<bool> checkUserExists() async {
+    DocumentSnapshot snap = await firestore.collection('users').doc(_uid).get();
+    if (snap.exists) {
+      print('User Exists');
+      return true;
+    } else {
+      print('new user');
+      return false;
+    }
   }
 
   Future saveToFirebase() async {
-    final DocumentReference ref =
-        FirebaseFirestore.instance.collection('users').doc(uid);
+    final DocumentReference ref = firestore.collection('users').doc(uid);
     await ref.set({
       'name': _name,
       'email': _email,
@@ -123,23 +107,33 @@ class SignInBloc extends ChangeNotifier {
   Future saveDataToSP() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
-    await sharedPreferences.setString('name', _name);
-    await sharedPreferences.setString('email', _email);
-    await sharedPreferences.setString('image url', _imageUrl);
-    await sharedPreferences.setString('uid', _uid);
+    await sharedPreferences.setString('name', _name!);
+    await sharedPreferences.setString('email', _email!);
+    await sharedPreferences.setString('image url', _imageUrl!);
+    await sharedPreferences.setString('uid', _uid!);
   }
 
-  Future getUserData(uid) async {
-    await FirebaseFirestore.instance
+  Future getUserDatafromSP() async {
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+
+    _name = sp.getString('name');
+    _email = sp.getString('email');
+    _uid = sp.getString('uid');
+    _imageUrl = sp.getString('image url');
+    notifyListeners();
+  }
+
+  Future getUserDataFromFirebase(uid) async {
+    await firestore
         .collection('users')
         .doc(uid)
         .get()
         .then((DocumentSnapshot snap) {
-      this._uid = snap.get('uid');
-      this._name = snap.get('name');
-      this._email = snap.get('email');
-      this._imageUrl = snap.get('image url');
-      print(_name);
+      this._uid = snap['uid'];
+      this._name = snap['name'];
+      this._email = snap['email'];
+      this._imageUrl = snap['image url'];
+      debugPrint("name: $_name, Image Url: $imageUrl ");
     });
     notifyListeners();
   }
@@ -161,6 +155,7 @@ class SignInBloc extends ChangeNotifier {
     await _firebaseAuth.signOut();
     await _googlSignIn.signOut();
     _isSignedIn = false;
+    _guestUser = false;
     clearAllData();
     notifyListeners();
   }
@@ -170,14 +165,6 @@ class SignInBloc extends ChangeNotifier {
     await sp.setBool('guest user', true);
     _guestUser = true;
     notifyListeners();
-  }
-
-  Future saveGuestUserData() async {
-    final SharedPreferences sp = await SharedPreferences.getInstance();
-    await sp.setString('name', 'guest');
-    await sp.setString('email', 'guestemail');
-    await sp.setString('image url', Config().guestUserImage);
-    await sp.setString('uid', 'guestuid');
   }
 
   void checkGuestUser() async {
@@ -192,8 +179,32 @@ class SignInBloc extends ChangeNotifier {
   }
 
   Future guestSignout() async {
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    await sp.setBool('guest user', false);
     _guestUser = false;
-    await clearAllData();
     notifyListeners();
+  }
+
+  Future<int> getTotalUsersCount() async {
+    final String fieldName = 'count';
+    final DocumentReference ref =
+        firestore.collection('item_count').doc('users_count');
+    DocumentSnapshot snap = await ref.get();
+    if (snap.exists == true) {
+      int itemCount = snap[fieldName] ?? 0;
+      return itemCount;
+    } else {
+      await ref.set({fieldName: 0});
+      return 0;
+    }
+  }
+
+  Future increaseUserCount() async {
+    await getTotalUsersCount().then((int documentCount) async {
+      await firestore
+          .collection('item_count')
+          .doc('users_count')
+          .update({'count': documentCount + 1});
+    });
   }
 }

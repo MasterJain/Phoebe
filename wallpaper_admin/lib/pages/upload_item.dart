@@ -62,8 +62,8 @@ class _UploadItemState extends State<UploadItem> {
 
   Future saveToDatabase() async {
     final DocumentReference ref =
-        Firestore.instance.collection('contents').document(timestamp);
-    await ref.setData({
+        FirebaseFirestore.instance.collection('contents').doc(timestamp);
+    await ref.set({
       'image url': imageUrlCtrl.text,
       'credits': creditsCtrl.text,
       'loves': 0,

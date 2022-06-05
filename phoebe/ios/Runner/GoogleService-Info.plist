@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:969126986343:ios:ee1c0dad6f8d691ea78ac2</string>
+	<string>1:969126986343:ios:fef3e2f6b1828718a78ac2</string>
 	<key>DATABASE_URL</key>
 	<string>https://projectphoebe-e53ab.firebaseio.com</string>
 </dict>

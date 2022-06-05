@@ -1,9 +1,8 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
 import 'package:flutter/material.dart';
-
-import 'package:wallpaper_app/abouthelpers/sexy_title.dart';
-import 'package:wallpaper_app/abouthelpers/ui_helpers.dart';
+import 'package:phoebe_app/abouthelpers/sexy_title.dart';
+import 'package:phoebe_app/abouthelpers/ui_helpers.dart';
 
 class MyAboutPage extends StatefulWidget {
   @override
@@ -134,6 +133,8 @@ class _MyAboutPageState extends State<MyAboutPage> {
                         ),
                       ),
                       splashColor: Colors.red,
+                      color: Colors.red,
+                      onTap: () {},
                     ),
                   ),
                   SexyTile(
@@ -167,6 +168,8 @@ class _MyAboutPageState extends State<MyAboutPage> {
                       ),
                     ),
                     splashColor: Colors.red,
+                    color: Colors.white,
+                    onTap: () {},
                   ),
                   SexyTile(
                     child: Padding(
@@ -203,6 +206,8 @@ class _MyAboutPageState extends State<MyAboutPage> {
                       ),
                     ),
                     splashColor: Colors.red,
+                    color: Colors.white,
+                    onTap: () {},
                   ),
                   SizedBox(
                     height: 36.0,

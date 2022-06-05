@@ -1,19 +1,18 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-
-import 'package:wallpaper_app/widgets/new_items.dart';
-import 'package:wallpaper_app/widgets/popular_items.dart';
+import 'package:phoebe_app/widgets/new_items.dart';
+import 'package:phoebe_app/widgets/popular_items.dart';
 
 class ExplorePage extends StatefulWidget {
-  ExplorePage({Key key}) : super(key: key);
+  ExplorePage({Key? key}) : super(key: key);
 
   @override
   _ExplorePageState createState() => _ExplorePageState();
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-  ScrollController scrollController;
+  ScrollController? scrollController;
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
   static List gifs = [
@@ -114,7 +113,14 @@ class _ExplorePageState extends State<ExplorePage> {
                     children: [
                       Expanded(
                         child: TabBarView(
-                          children: <Widget>[PopularItems(), NewItems()],
+                          children: <Widget>[
+                            PopularItems(
+                              scaffoldKey: scaffoldKey,
+                            ),
+                            NewItems(
+                              scaffoldKey: scaffoldKey,
+                            )
+                          ],
                         ),
                       ),
                     ],

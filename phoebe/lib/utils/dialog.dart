@@ -1,12 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
-import 'package:wallpaper_app/blocs/sign_in_bloc.dart';
-import 'package:wallpaper_app/models/config.dart';
+import 'package:phoebe_app/blocs/sign_in_bloc.dart';
+import 'package:phoebe_app/models/config.dart';
+import 'package:phoebe_app/pages/sign_in_page.dart';
+import 'package:phoebe_app/utils/next_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:wallpaper_app/pages/sign_in_page.dart';
-
-import 'package:wallpaper_app/utils/next_screen.dart';
 
 void openDialog(context, title, message) {
   showDialog(
@@ -91,7 +89,7 @@ showUserInfo(context, name, email, imageUrl) {
       });
 }
 
-showGuestUserInfo(context, name, email, imageUrl) {
+showGuestUserInfo(context) {
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -110,14 +108,19 @@ showGuestUserInfo(context, name, email, imageUrl) {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.grey[300],
-                        image: DecorationImage(
-                            image: CachedNetworkImageProvider(imageUrl))),
+                        image: !context.watch<SignInBloc>().isSignedIn ||
+                                context.watch<SignInBloc>().imageUrl == null
+                            ? DecorationImage(
+                                image: NetworkImage(Config().guestUserImage))
+                            : DecorationImage(
+                                image: CachedNetworkImageProvider(
+                                    context.watch<SignInBloc>().imageUrl!))),
                   ),
                   SizedBox(
                     height: 20,
                   ),
                   Text(
-                    'Hi $name,',
+                    'Hi there',
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

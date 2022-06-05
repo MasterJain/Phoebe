@@ -5,12 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:launch_review/launch_review.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:wallpaper_app/blocs/sign_in_bloc.dart';
-import 'package:wallpaper_app/pages/about_page.dart';
+import 'package:phoebe_app/blocs/sign_in_bloc.dart';
+import 'package:phoebe_app/pages/bookmark.dart';
 
 import '../models/config.dart';
-import '../pages/bookmark.dart';
+
 import '../pages/catagories.dart';
 import '../pages/explore.dart';
 
@@ -19,7 +18,7 @@ import '../utils/next_screen.dart';
 import 'package:provider/provider.dart';
 
 class DrawerWidget extends StatefulWidget {
-  DrawerWidget({Key key}) : super(key: key);
+  DrawerWidget({Key? key}) : super(key: key);
 
   @override
   _DrawerWidgetState createState() => _DrawerWidgetState();
@@ -35,10 +34,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     'Explore',
     'Saved Items',
     'About App',
-    'Rate & Review',
-    'Report Content',
-    'More Info',
-    'Follow on Instagram',
+    // 'Report Content',
+    //'More Info',
+    // 'Follow on Instagram',
     'Logout'
   ];
 
@@ -47,21 +45,12 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     FontAwesomeIcons.solidCompass,
     FontAwesomeIcons.solidHeart,
     FontAwesomeIcons.info,
-    FontAwesomeIcons.star,
-    Icons.report_problem,
-    FontAwesomeIcons.accessibleIcon,
-    FontAwesomeIcons.instagram,
-    FontAwesomeIcons.signOutAlt
+    // FontAwesomeIcons.star,
+    //  Icons.report_problem,
+    // FontAwesomeIcons.accessibleIcon,
+    // FontAwesomeIcons.instagram,
+    FontAwesomeIcons.rightFromBracket
   ];
-
-  _launchURL() async {
-    const url = 'https://www.instagram.com/getphoebe/';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
 
   Future openLogoutDialog(context1) async {
     showDialog(
@@ -89,7 +78,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   }
                 },
               ),
-              TextButton( //FlatButton
+              TextButton(
+                //FlatButton
                 child: Text('No'),
                 onPressed: () {
                   Navigator.pop(context);
@@ -119,17 +109,12 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   showAlertDialog(BuildContext context) {
     // set up the buttons
-    Widget instagram = TextButton(
-      child: Text("Instagram"),
-      onPressed: () {
-        _launchURL();
-      },
-    );
-    Widget email = TextButton( //FlatButton
+
+    Widget email = TextButton(
+      //FlatButton
       child: Text("Email"),
       onPressed: () {
-        FlutterClipboard.copy("masterjain@icloud.com")
-            .then((result) {
+        FlutterClipboard.copy("masterjain@icloud.com").then((result) {
           final snackBar = SnackBar(
             content: Text('Email Copied'),
             action: SnackBarAction(
@@ -137,11 +122,12 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               onPressed: () {},
             ),
           );
-          Scaffold.of(context).showSnackBar(snackBar);
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         });
       },
     );
-    Widget close = TextButton( //FlatButton
+    Widget close = TextButton(
+      //FlatButton
       child: Text("Close"),
       onPressed: () {},
     );
@@ -160,7 +146,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 "If this content belongs to you and you want it to get taken down please message me via below options \n\nAfter proper verification  of the ownership,I will take it down",
                 style: TextStyle(color: Colors.white)),
             actions: [
-              instagram,
               email,
               close,
             ],
@@ -226,18 +211,20 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           } else if (index == 1) {
                             nextScreeniOS(context, ExplorePage());
                           } else if (index == 2) {
-                            nextScreeniOS(context, BookmarkPage());
+                            nextScreeniOS(
+                                context,
+                                FavouritePage(
+                                    userUID: context.read<SignInBloc>().uid));
                           } else if (index == 3) {
                             aboutAppDialog();
+                            //}
+                            //else if (index == 4) {
+                            //handleRating();
+                            // } else if (index == 4) {
+                            //  nextScreeniOS(context, MyAboutPage());
+                            //}// else if (index == 5) {
+                            // nextScreeniOS(context, MyAboutPage());
                           } else if (index == 4) {
-                            handleRating();
-                          } else if (index == 5) {
-                            showAlertDialog(context);
-                          } else if (index == 6) {
-                            nextScreeniOS(context, MyAboutPage());
-                          } else if (index == 7) {
-                            _launchURL();
-                          } else if (index == 8) {
                             openLogoutDialog(context);
                           }
                         },

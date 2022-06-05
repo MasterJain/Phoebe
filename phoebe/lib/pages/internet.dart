@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../blocs/internet_bloc.dart';
 
 class NoInternetPage extends StatelessWidget {
-  const NoInternetPage({Key key}) : super(key: key);
+  const NoInternetPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

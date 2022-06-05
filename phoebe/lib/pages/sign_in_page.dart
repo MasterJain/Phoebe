@@ -2,8 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:provider/provider.dart';
-import 'package:wallpaper_app/blocs/userdata_bloc.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import '../blocs/internet_bloc.dart';
 import '../blocs/sign_in_bloc.dart';
 import '../models/config.dart';
@@ -12,14 +13,16 @@ import '../utils/next_screen.dart';
 import '../utils/snacbar.dart';
 
 class SignInPage extends StatefulWidget {
-  SignInPage({Key key}) : super(key: key);
-
+  SignInPage({Key? key, this.closeDialog}) : super(key: key);
+  final bool? closeDialog;
   @override
   _SignInPageState createState() => _SignInPageState();
 }
 
 class _SignInPageState extends State<SignInPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final RoundedLoadingButtonController _buttonController =
+      RoundedLoadingButtonController();
 
   bool signInStartGoogle = false;
   double leftPaddingGoogle = 20;
@@ -44,42 +47,48 @@ class _SignInPageState extends State<SignInPage> {
 
   handleGuestUser() async {
     final sb = context.read<SignInBloc>();
-    final ub = context.read<UserBloc>();
-    await sb.setGuestUser();
-    await sb.saveGuestUserData();
-    await ub.getUserData().then((_) => nextScreenReplace(context, HomePage()));
+    await sb.setGuestUser().then((_) {
+      if (widget.closeDialog == null || widget.closeDialog == false) {
+        Future.delayed(Duration(milliseconds: 500))
+            .then((value) => nextScreenReplace(context, HomePage()));
+      } else {
+        Navigator.pop(context);
+      }
+    });
   }
 
-  handleGoogleSignIn() async {
+  Future handleGoogleSignIn() async {
     final sb = context.read<SignInBloc>();
     final ib = context.read<InternetBloc>();
     await ib.checkInternet();
     if (ib.hasInternet == false) {
       openSnacbar(_scaffoldKey, 'Check your internet connection!');
     } else {
-      handleAnimationGoogle();
       await sb.signInWithGoogle().then((_) {
         if (sb.hasError == true) {
           openSnacbar(_scaffoldKey, 'Something is wrong. Please try again.');
-          setState(() {
-            signInStartGoogle = false;
-          });
-          handleReverseAnimationGoogle();
+          _buttonController.reset();
         } else {
-          sb.checkUserExists().then((value) {
-            if (sb.userExists == true) {
-              sb.getUserData(sb.uid).then((value) => sb
-                  .saveDataToSP()
-                  .then((value) => sb.setSignIn().then((value) {
-                        setState(() => signInCompleteGoogle = true);
-                        handleAfterSignupGoogle();
-                      })));
-            } else {
-              sb.getTimestamp().then((value) => sb.saveDataToSP().then(
-                  (value) => sb
-                      .saveToFirebase()
+          sb.checkUserExists().then((isUserExisted) async {
+            if (isUserExisted) {
+              await sb
+                  .getUserDataFromFirebase(sb.uid)
+                  .then((value) => sb.guestSignout())
+                  .then((value) => sb
+                      .saveDataToSP()
                       .then((value) => sb.setSignIn().then((value) {
-                            setState(() => signInCompleteGoogle = true);
+                            _buttonController.success();
+                            handleAfterSignupGoogle();
+                          })));
+            } else {
+              sb.getTimestamp().then((value) => sb
+                  .saveToFirebase()
+                  .then((value) => sb.increaseUserCount())
+                  .then((value) => sb.guestSignout())
+                  .then((value) => sb
+                      .saveDataToSP()
+                      .then((value) => sb.setSignIn().then((value) {
+                            _buttonController.success();
                             handleAfterSignupGoogle();
                           }))));
             }
@@ -139,7 +148,8 @@ class _SignInPageState extends State<SignInPage> {
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
             actions: [
-              TextButton( //TextButton
+              TextButton(
+                  //TextButton
                   onPressed: () {
                     handleGuestUser();
                   },
@@ -223,7 +233,8 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Widget _firstChildGoogle() {
-    return TextButton.icon( //TextButton
+    return TextButton.icon(
+      //TextButton
       icon: signInCompleteGoogle == false
           ? Icon(
               FontAwesomeIcons.google,

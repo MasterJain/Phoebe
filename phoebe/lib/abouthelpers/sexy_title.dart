@@ -1,13 +1,11 @@
-
 import 'package:flutter/material.dart';
-import 'ui_helpers.dart';
 
 class SexyTile extends StatelessWidget {
   const SexyTile({
-    this.child,
-    this.color,
-    this.splashColor,
-    this.onTap,
+    required this.child,
+    required this.color,
+    required this.splashColor,
+    required this.onTap,
   });
   final Widget child;
   final Color color;
@@ -26,7 +24,7 @@ class SexyTile extends StatelessWidget {
           child: child,
           splashColor: splashColor,
           borderRadius: BorderRadius.circular(15.0),
-          onTap: onTap == null ? doNothing : () => onTap(),
+          onTap: () {},
         ),
       ),
     );

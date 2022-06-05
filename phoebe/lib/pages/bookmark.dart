@@ -1,27 +1,110 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
-
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:wallpaper_app/blocs/sign_in_bloc.dart';
-import 'package:wallpaper_app/models/config.dart';
-import 'package:wallpaper_app/pages/details.dart';
-import 'package:wallpaper_app/pages/empty_page.dart';
 
-import 'package:wallpaper_app/widgets/cached_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:phoebe_app/blocs/sign_in_bloc.dart';
+
+import 'package:phoebe_app/models/contentmodel.dart';
+
+import 'package:phoebe_app/pages/empty_page.dart';
+
+import 'package:phoebe_app/widgets/gridcard.dart';
+import 'package:provider/provider.dart';
 import '../blocs/bookmark_bloc.dart';
 
-class BookmarkPage extends StatefulWidget {
-  const BookmarkPage({Key key}) : super(key: key);
+class FavouritePage extends StatefulWidget {
+  FavouritePage({Key? key, required this.userUID}) : super(key: key);
+  final String? userUID;
 
   @override
-  _BookmarkPageState createState() => _BookmarkPageState();
+  _FavouritePageState createState() => _FavouritePageState();
 }
 
-class _BookmarkPageState extends State<BookmarkPage> {
+class _FavouritePageState extends State<FavouritePage> {
+  Future<List> _getData(List bookmarkedList) async {
+    print('main list: ${bookmarkedList.length}]');
+
+    List d = [];
+    if (bookmarkedList.length <= 10) {
+      await FirebaseFirestore.instance
+          .collection('contents')
+          .where('timestamp', whereIn: bookmarkedList)
+          .get()
+          .then((QuerySnapshot snap) {
+        d.addAll(snap.docs.map((e) => ContentModel.fromFirestore(e)).toList());
+      });
+    } else if (bookmarkedList.length > 10) {
+      int size = 10;
+      var chunks = [];
+
+      for (var i = 0; i < bookmarkedList.length; i += size) {
+        var end = (i + size < bookmarkedList.length)
+            ? i + size
+            : bookmarkedList.length;
+        chunks.add(bookmarkedList.sublist(i, end));
+      }
+
+      await FirebaseFirestore.instance
+          .collection('contents')
+          .where('timestamp', whereIn: chunks[0])
+          .get()
+          .then((QuerySnapshot snap) {
+        d.addAll(snap.docs.map((e) => ContentModel.fromFirestore(e)).toList());
+      }).then((value) async {
+        await FirebaseFirestore.instance
+            .collection('contents')
+            .where('timestamp', whereIn: chunks[1])
+            .get()
+            .then((QuerySnapshot snap) {
+          d.addAll(
+              snap.docs.map((e) => ContentModel.fromFirestore(e)).toList());
+        });
+      });
+    } else if (bookmarkedList.length > 20) {
+      int size = 10;
+      var chunks = [];
+
+      for (var i = 0; i < bookmarkedList.length; i += size) {
+        var end = (i + size < bookmarkedList.length)
+            ? i + size
+            : bookmarkedList.length;
+        chunks.add(bookmarkedList.sublist(i, end));
+      }
+
+      await FirebaseFirestore.instance
+          .collection('contents')
+          .where('timestamp', whereIn: chunks[0])
+          .get()
+          .then((QuerySnapshot snap) {
+        d.addAll(snap.docs.map((e) => ContentModel.fromFirestore(e)).toList());
+      }).then((value) async {
+        await FirebaseFirestore.instance
+            .collection('contents')
+            .where('timestamp', whereIn: chunks[1])
+            .get()
+            .then((QuerySnapshot snap) {
+          d.addAll(
+              snap.docs.map((e) => ContentModel.fromFirestore(e)).toList());
+        });
+      }).then((value) async {
+        await FirebaseFirestore.instance
+            .collection('contents')
+            .where('timestamp', whereIn: chunks[2])
+            .get()
+            .then((QuerySnapshot snap) {
+          d.addAll(
+              snap.docs.map((e) => ContentModel.fromFirestore(e)).toList());
+        });
+      });
+    }
+
+    return d;
+  }
+
   static List gifs = [
     'https://i.pinimg.com/originals/bd/7d/cf/bd7dcf911fe1a807220fcb98806958c7.gif',
     'https://i.pinimg.com/originals/44/9e/05/449e058844d89d45822a44c9f5f60fe2.gif',
@@ -40,11 +123,14 @@ class _BookmarkPageState extends State<BookmarkPage> {
     "https://thumbs.gfycat.com/ShabbyOblongDove-size_restricted.gif",
     "https://i.pinimg.com/originals/d1/de/5a/d1de5ab789284bc7f6a8988bc4756989.gif",
   ];
+
   static Random random = new Random();
   var showgifs = gifs[random.nextInt(gifs.length)];
+
   @override
   Widget build(BuildContext context) {
-    final sb = context.watch<SignInBloc>();
+    final String _collectionName = 'users';
+    final String _snapText = 'loved items';
 
     return Stack(children: <Widget>[
       Image.network(
@@ -54,48 +140,58 @@ class _BookmarkPageState extends State<BookmarkPage> {
         fit: BoxFit.cover,
       ),
       RefreshIndicator(
-        onRefresh: () async {
-          await context.read<BookmarkBloc>().getData();
-        },
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
+          onRefresh: () async {
+            await context.read<BookmarkBloc>().getData();
+          },
+          child: Scaffold(
             backgroundColor: Colors.transparent,
-            iconTheme: IconThemeData(
-              color: Colors.white,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              iconTheme: IconThemeData(
+                color: Colors.white,
+              ),
+              centerTitle: false,
+              title: Text('Saved Items', style: TextStyle(color: Colors.white)),
             ),
-            centerTitle: false,
-            title: Text('Saved Items', style: TextStyle(color: Colors.white)),
-          ),
-          body: sb.guestUser == true
-              ? EmptyPage(
-                  icon: FontAwesomeIcons.heart,
-                  title:
-                      'No wallpapers found.\n Sign in to access this feature',
-                )
-              : FutureBuilder(
-                  future: context.watch<BookmarkBloc>().getData(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data.length == 0)
-                        return EmptyPage(
-                          icon: FontAwesomeIcons.heart,
-                          title: 'No wallpapers found',
-                        );
-                      return _buildList(snapshot);
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text(snapshot.error),
-                      );
-                    }
+            body: context.read<SignInBloc>().guestUser == true ||
+                    widget.userUID == null
+                ? EmptyPage(
+                    icon: FontAwesomeIcons.heart,
+                    title:
+                        'No wallpapers found.\n Sign in to access this feature',
+                  )
+                : StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection(_collectionName)
+                        .doc(widget.userUID!)
+                        .snapshots(),
+                    builder: (BuildContext context, AsyncSnapshot snap) {
+                      if (!snap.hasData) return CircularProgressIndicator();
 
-                    return Center(
-                      child: CupertinoActivityIndicator(),
-                    );
-                  },
-                ),
-        ),
-      ),
+                      List bookamrkedList = snap.data[_snapText];
+                      return FutureBuilder(
+                          future: _getData(bookamrkedList),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (!snapshot.hasData) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error'),
+                              );
+                            } else if (snapshot.hasData &&
+                                snapshot.data.length == 0) {
+                              return EmptyPage(
+                                icon: FontAwesomeIcons.heart,
+                                title: 'No wallpapers found',
+                              );
+                            } else {
+                              return _buildList(snapshot);
+                            }
+                          });
+                    },
+                  ),
+          ))
     ]);
   }
 
@@ -104,62 +200,10 @@ class _BookmarkPageState extends State<BookmarkPage> {
       crossAxisCount: 4,
       itemCount: snapshot.data.length,
       itemBuilder: (BuildContext context, int index) {
-        List d = snapshot.data;
-
-        return InkWell(
-          child: Stack(
-            children: <Widget>[
-              Hero(
-                  tag: 'bookmark$index',
-                  child: cachedImage(d[index]['image url'])),
-              Positioned(
-                bottom: 30,
-                left: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      Config().hashTag,
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                    Text(
-                      d[index]['category'],
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    )
-                  ],
-                ),
-              ),
-              Positioned(
-                right: 10,
-                top: 20,
-                child: Row(
-                  children: [
-                    Icon(Icons.favorite,
-                        color: Colors.white.withOpacity(0.5), size: 25),
-                    Text(
-                      d[index]['loves'].toString(),
-                      style: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DetailsPage(
-                          tag: 'bookmark$index',
-                          imageUrl: d[index]['image url'],
-                          credits: d[index]['credits'],
-                          catagory: d[index]['category'],
-                          timestamp: d[index]['timestamp'],
-                        )));
-          },
+        final ContentModel d = snapshot.data[index];
+        return GridCard(
+          d: d,
+          heroTag: 'bookmark-${d.timestamp}',
         );
       },
       staggeredTileBuilder: (int index) =>

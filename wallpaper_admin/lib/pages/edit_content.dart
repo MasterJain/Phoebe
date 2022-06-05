@@ -66,8 +66,8 @@ class _EditContentState extends State<EditContent> {
 
   Future updateDatabase() async {
     final DocumentReference ref =
-        Firestore.instance.collection('contents').document(timestamp);
-    await ref.updateData(
+        FirebaseFirestore.instance.collection('contents').doc(timestamp);
+    await ref.update(
         {'image url': imageUrl, 'category': category, 'credits': credits});
   }
 

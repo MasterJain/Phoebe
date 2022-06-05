@@ -9,9 +9,7 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
-
-
-  final Firestore firestore = Firestore.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   ScrollController controller;
   DocumentSnapshot _lastVisible;
@@ -35,21 +33,21 @@ class _UsersPageState extends State<UsersPage> {
           .collection('users')
           .orderBy('timestamp', descending: true)
           .limit(10)
-          .getDocuments();
+          .get();
     else
       data = await firestore
           .collection('users')
           .orderBy('timestamp', descending: true)
           .startAfter([_lastVisible['timestamp']])
           .limit(10)
-          .getDocuments();
+          .get();
 
-    if (data != null && data.documents.length > 0) {
-      _lastVisible = data.documents[data.documents.length - 1];
+    if (data != null && data.docs.length > 0) {
+      _lastVisible = data.docs[data.docs.length - 1];
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _data.addAll(data.documents);
+          _data.addAll(data.docs);
         });
       }
     } else {

@@ -14,7 +14,7 @@ class DataInfoPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           StreamBuilder(
-            stream: Firestore.instance.collection('users').snapshots(),
+            stream: FirebaseFirestore.instance.collection('users').snapshots(),
             builder: (context, AsyncSnapshot snap) {
               if (!snap.hasData) return card('TOTAL USER', 0);
               return card('TOTAL USER', snap.data.documents.length);
@@ -24,7 +24,8 @@ class DataInfoPage extends StatelessWidget {
             width: 20,
           ),
           StreamBuilder(
-            stream: Firestore.instance.collection('contents').snapshots(),
+            stream:
+                FirebaseFirestore.instance.collection('contents').snapshots(),
             builder: (context, AsyncSnapshot snap) {
               if (!snap.hasData) return card('TOTAL CONTENTS', 0);
               return card('TOTAL CONTENTS', snap.data.documents.length);
@@ -34,7 +35,8 @@ class DataInfoPage extends StatelessWidget {
             width: 20,
           ),
           StreamBuilder(
-            stream: Firestore.instance.collection('categories').snapshots(),
+            stream:
+                FirebaseFirestore.instance.collection('categories').snapshots(),
             builder: (context, AsyncSnapshot snap) {
               if (!snap.hasData) return card('TOTAL CATEGORIES', 0);
               return card('TOTAL CATEGORIES', snap.data.documents.length);

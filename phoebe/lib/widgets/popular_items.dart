@@ -1,27 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:phoebe_app/models/contentmodel.dart';
+import 'package:phoebe_app/utils/snacbar.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:wallpaper_app/models/config.dart';
-import 'package:wallpaper_app/pages/details.dart';
-import 'package:wallpaper_app/widgets/cached_image.dart';
+import 'package:phoebe_app/widgets/gridcard.dart';
 
 class PopularItems extends StatefulWidget {
-  PopularItems({Key key}) : super(key: key);
+  PopularItems({Key? key, required this.scaffoldKey}) : super(key: key);
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
   _PopularItemsState createState() => _PopularItemsState();
 }
 
-class _PopularItemsState extends State<PopularItems> {
+class _PopularItemsState extends State<PopularItems>
+    with AutomaticKeepAliveClientMixin {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  ScrollController controller;
-  DocumentSnapshot _lastVisible;
-  bool _isLoading;
-  List<DocumentSnapshot> _data = [];
-  //List<DocumentSnapshot> _data = new List<DocumentSnapshot>();
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  ScrollController? controller;
+  DocumentSnapshot? _lastVisible;
+  late bool _isLoading;
+  List<ContentModel> _data = [];
+  List<DocumentSnapshot> _snap = [];
 
   @override
   void initState() {
@@ -38,49 +39,40 @@ class _PopularItemsState extends State<PopularItems> {
           .collection('contents')
           .orderBy('loves', descending: true)
           .limit(10)
-      .get();
-         // .getDocuments();
+          .get();
     else
       data = await firestore
           .collection('contents')
           .orderBy('loves', descending: true)
-          .startAfter([_lastVisible['loves']])
+          .startAfter([_lastVisible!['loves']])
           .limit(10)
           .get();
 
-    if (data != null && data.docs.length > 0) {
+    if (data.docs.length > 0) {
       _lastVisible = data.docs[data.docs.length - 1];
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _data.addAll(data.docs);
+          _snap.addAll(data.docs);
+          _data = _snap.map((e) => ContentModel.fromFirestore(e)).toList();
         });
       }
     } else {
       setState(() => _isLoading = false);
-      scaffoldKey.currentState.build(context);
-      //scaffoldKey.currentState?(
-      SnackBar(
-        content: Text('No more posts!'),
-      );
-      //scaffoldKey.currentState?.showSnackBar(
-      // SnackBar(
-      //content: Text('No more posts!'),
-      //),
-      //);
+      openSnacbar(widget.scaffoldKey, 'No more contents!');
     }
     return null;
   }
 
   @override
   void dispose() {
-    controller.removeListener(_scrollListener);
+    controller!.removeListener(_scrollListener);
     super.dispose();
   }
 
   void _scrollListener() {
     if (!_isLoading) {
-      if (controller.position.pixels == controller.position.maxScrollExtent) {
+      if (controller!.position.pixels == controller!.position.maxScrollExtent) {
         setState(() => _isLoading = true);
         _getData();
       }
@@ -89,75 +81,22 @@ class _PopularItemsState extends State<PopularItems> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         Expanded(
           child: StaggeredGridView.countBuilder(
-            controller: controller,
             crossAxisCount: 4,
+            controller: controller,
             itemCount: _data.length + 1,
             itemBuilder: (BuildContext context, int index) {
               if (index < _data.length) {
-                final DocumentSnapshot d = _data[index];
-                return InkWell(
-                  child: Stack(
-                    children: <Widget>[
-                      Hero(
-                          tag: 'popular$index',
-                          child: cachedImage(d['image url'])),
-                      Positioned(
-                        bottom: 30,
-                        left: 10,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              Config().hashTag,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14),
-                            ),
-                            Text(
-                              d['category'],
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            )
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        right: 10,
-                        top: 20,
-                        child: Row(
-                          children: [
-                            Icon(Icons.favorite,
-                                color: Colors.white.withOpacity(0.5), size: 25),
-                            Text(
-                              d['loves'].toString(),
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(0.7),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DetailsPage(
-                                  tag: 'popular$index',
-                                  imageUrl: d['image url'],
-                                  credits: d['credits'],
-                                  catagory: d['category'],
-                                  timestamp: d['timestamp'],
-                                )));
-                  },
+                final ContentModel d = _data[index];
+                return GridCard(
+                  d: d,
+                  heroTag: 'popular-${d.timestamp}',
                 );
               }
-
               return Center(
                 child: new Opacity(
                   opacity: _isLoading ? 1.0 : 0.0,
@@ -178,4 +117,7 @@ class _PopularItemsState extends State<PopularItems> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -24,28 +24,29 @@ class AdminBloc extends ChangeNotifier {
   List get categoryNames => _categoryNames;
 
   void getAdminPass() {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('admin')
-        .document('usertype')
+        .doc('usertype')
         .get()
         .then((DocumentSnapshot snap) {
-      String _aPass = snap.data['admin password'];
+      String _aPass = snap['admin password'];
+
       _adminPass = _aPass;
       notifyListeners();
     });
   }
 
   Future deleteContent(timestamp) async {
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection('contents')
-        .document(timestamp)
+        .doc(timestamp)
         .delete();
   }
 
   Future getCategories() async {
     QuerySnapshot snap =
-        await Firestore.instance.collection('categories').getDocuments();
-    var x = snap.documents;
+        await FirebaseFirestore.instance.collection('categories').get();
+    var x = snap.docs;
 
     _categories.clear();
     _categoryNames.clear();
@@ -58,9 +59,9 @@ class AdminBloc extends ChangeNotifier {
   }
 
   Future deleteCategory(timestamp) async {
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection('categories')
-        .document(timestamp)
+        .doc(timestamp)
         .delete();
     getCategories();
   }

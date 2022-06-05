@@ -1,9 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+
+import 'package:phoebe_app/blocs/ads_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:wallpaper_app/blocs/ads_bloc.dart';
+
 import './blocs/bookmark_bloc.dart';
 import './blocs/data_bloc.dart';
 import './blocs/internet_bloc.dart';
@@ -15,12 +16,11 @@ import './pages/sign_in_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FlutterDownloader.initialize(debug: false);
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyApp1 extends StatelessWidget {
-  const MyApp1({Key key}) : super(key: key);
+  const MyApp1({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
