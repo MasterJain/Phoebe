@@ -2,14 +2,15 @@
 
 
 # ![Logo](https://github.com/MasterJain/apex_soundboard/blob/main/assets/images/apexlogo.jpg)Apex Soundboard
-A soundboard I made for one of my favorite game  Apex legends Updated to Sound Null Safety and some optimisations [Download and Try it out](https://github.com/MasterJain/apex_soundboard/raw/main/apex.apk "Download and Try it out(Android only)")
+A Full of features wallpaper app now updated to Sound Null Safety and some backdoor optimisations [Download and Try it out](https://github.com/MasterJain/apex_soundboard/raw/main/apex.apk "Download and Try it out(Android only)")
 
 ## Features
 
-- Click on quips to play
-- Simple UI
-- Share any Voice Quips to friends
-- Download Voice Quips***
+- Dynamic UI
+- Set and Download Wallpapers with ease***
+- Keep your loved walllpapers organised in favourites
+- 'Popular Wallpapers category helps you in seeing what the users most favourite are
+- New Wallpapers category shows the latest wallpaper
 - Works well on both iOS and Android
 
 ## Screenshots
