@@ -1,7 +1,7 @@
 ## Proudly made with ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)
 
 
-# ![Logo](https://github.com/MasterJain/Phoebe/blob/main/phoebe/assets/images/icon.png?raw=true)Phoebe
+# ![Logo](https://github.com/MasterJain/Phoebe/blob/main/phoebe/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png?raw=true)Phoebe
 A Full of features wallpaper app now updated to Sound Null Safety and some backdoor optimisations [Download and Try it out](https://github.com/MasterJain/apex_soundboard/raw/main/apex.apk "Download and Try it out(Android only)")
 
 ## Features
@@ -21,14 +21,24 @@ A Full of features wallpaper app now updated to Sound Null Safety and some backd
     <td>Login Page</td>
      <td>Home Page</td>
      <td>Categories Page</td>
-    <td>Popular Wallpapers/New Wallpapers</td>
-    <td>CFavourites Page</td>
-    <td>Wallpaper Details Page</td>
+    
   </tr>
   <tr>
     <td><img src="https://github.com/MasterJain/Phoebe/blob/main/screenshots/Screenshot_20220608-182246_Phoebe.png?raw=true" width=270 height=480></td>
     <td><img src="https://raw.githubusercontent.com/MasterJain/apex_soundboard/main/assets/images/Simulator%20Screen%20Shot%20-%20iPhone%2013%20-%202022-05-31%20at%2023.00.05.png" width=270 height=480></td>
     <td><img src="https://github.com/MasterJain/Phoebe/blob/main/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%2013%20Pro%20Max%20-%202022-04-17%20at%2008.40.22.png?raw=true" width=270 height=480></td>
+    <td><img src="https://github.com/MasterJain/Phoebe/blob/main/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%2013%20Pro%20Max%20-%202022-04-17%20at%2008.40.40.png?raw=true" width=270 height=480></td>
+    
+ </table>
+ 
+ <table>
+  <tr>
+   
+    <td>Popular Wallpapers/New Wallpapers</td>
+    <td>Favourites Page</td>
+    <td>Wallpaper Details Page</td>
+  </tr>
+  <tr>
     <td><img src="https://github.com/MasterJain/Phoebe/blob/main/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%2013%20Pro%20Max%20-%202022-04-17%20at%2008.40.40.png?raw=true" width=270 height=480></td>
     <td><img src="https://github.com/MasterJain/Phoebe/blob/main/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%2013%20Pro%20Max%20-%202022-04-17%20at%2008.41.05.png?raw=true" width=270 height=480></td>
     <td><img src="https://github.com/MasterJain/Phoebe/blob/main/screenshots/Screenshot_20220608-182450_Phoebe.png?raw=true" width=270 height=480></td>
