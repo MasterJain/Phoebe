@@ -24,7 +24,7 @@ A soundboard I made for one of my favorite game  Apex legends Updated to Sound N
     <td><img src="https://raw.githubusercontent.com/MasterJain/apex_soundboard/main/assets/images/Simulator%20Screen%20Shot%20-%20iPhone%2013%20-%202022-05-31%20at%2023.00.05.png" width=270 height=480></td>
     <td><img src="https://raw.githubusercontent.com/MasterJain/apex_soundboard/main/assets/images/Simulator%20Screen%20Shot%20-%20iPhone%2013%20-%202022-05-29%20at%2016.18.08.png" width=270 height=480></td>
     <td>
-      <video src='https://firebasestorage.googleapis.com/v0/b/projectphoebe-e53ab.appspot.com/o/video%2FUntitled%20video%20%E2%80%90%20Made%20with%20Clipchamp.mp4' width=270 height=480>
+      <video src='https://firebasestorage.googleapis.com/v0/b/projectphoebe-e53ab.appspot.com/o/video%2FUntitled%20video%20%E2%80%90%20Made%20with%20Clipchamp.mp4?alt=media&token=feb9b229-d2d3-442e-a217-0c3db0e775a3' width=270 height=480>
 
      </td>
   </tr>
