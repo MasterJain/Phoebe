@@ -43,8 +43,20 @@ Phoebe App:
   </tr>
  </table>
 
-## Appendix
+Phoebe Admin Panel:
+Want to test admin panel?? [Test it out here](https://projectphoebe-e53ab.web.app/#/ "Test it out here") (password: tester1234)
+<p align="center">
+  <img src="https://github.com/MasterJain/Phoebe/blob/main/screenshots/Screen%20Shot%202022-06-08%20at%206.45.43%20PM.png?raw=true" />
+</p>
+<p align="center">
+  <img src="https://github.com/MasterJain/Phoebe/blob/main/screenshots/Screen%20Shot%202022-06-08%20at%206.52.12%20PM.png?raw=true" />
+</p>
+<p align="center">
+  <img src="https://github.com/MasterJain/Phoebe/blob/main/screenshots/Screen%20Shot%202022-06-08%20at%206.52.29%20PM.png?raw=true" />
+</p>
 
+## Appendix
+ Add WIki
 ***Set Wallpaper feature not available in iOS due to iOS restrictions***
 
 ## Ihr alle gebt meinem Leben einen Sinn.
