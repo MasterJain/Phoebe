@@ -59,9 +59,4 @@ Want to test admin panel?? [Test it out here](https://projectphoebe-e53ab.web.ap
  Add WIki
 ***Set Wallpaper feature not available in iOS due to iOS restrictions***
 
-## Ihr alle gebt meinem Leben einen Sinn.
-
-- ***For Emma❤️***
-- ***For Dad***
-- ***For Mr and Mrs Jaschniski***
 
